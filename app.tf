@@ -77,3 +77,16 @@ resource "aws_instance" "app" {
 output "app_public_ip" {
   value = aws_instance.app.public_ip
 }
+
+resource "aws_iam_role_policy" "rds_read" {
+  name = "read-rds-config"
+  role = aws_iam_role.app.id
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect   = "Allow"
+      Action   = ["rds:DescribeDBClusters", "rds:DescribeDBInstances"]
+      Resource = "*"
+    }]
+  })
+}
