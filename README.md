@@ -37,3 +37,6 @@ flowchart LR
 ## Clean up
 
 Run terraform destroy after use.
+## Build manual
+
+Every step is in [docs/MANUAL.md](docs/MANUAL.md).
