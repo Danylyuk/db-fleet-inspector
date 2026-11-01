@@ -1,0 +1,27 @@
+name: Deploy inspector
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - app/**
+      - deploy.sh
+      - .github/workflows/deploy.yml
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::892894911585:role/fleet-github-deploy
+          aws-region: eu-central-1
+      - name: Deploy and wait
+        run: |
+          COMMAND_ID=$(bash deploy.sh)
+          aws ssm wait command-executed --command-id "$COMMAND_ID" --instance-id i-01964ac3e7b6810e9
