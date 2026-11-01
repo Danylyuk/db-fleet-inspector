@@ -243,9 +243,7 @@ exit
 
 **34\. Allow the server to read database settings (on the Mac)**
 
-```bash
-cat >> app.tf <<'EOF' ç Ω  resource "aws_iam_role_policy" "rds_read" {   name = "read-rds-config"   role = aws_iam_role.app.id   policy = jsonencode({     Version = "2012-10-17"     Statement = [{       Effect   = "Allow"       Action   = ["rds:DescribeDBClusters", "rds:DescribeDBInstances"]       Resource = "*"     }]   }) } EOF
-```
+Full code: [app.tf](../app.tf)
 
 **Why:** The inspector checks settings through the AWS API. This role can only read them, not change anything. Describe actions need Resource \* here, which is an acceptable trade-off for read-only access.
 
@@ -304,7 +302,18 @@ sudo dnf install -y python3-pip && sudo pip3 install boto3
 **42\. Register the app as a service (on the server)**
 
 ```bash
-sudo tee /etc/systemd/system/inspector.service > /dev/null <<'EOF' [Unit] Description=DB Fleet Inspector After=network-online.target   [Service] ExecStart=/usr/bin/python3 /opt/inspector.py Restart=always   [Install] WantedBy=multi-user.target EOF sudo systemctl daemon-reload sudo systemctl enable inspector
+sudo tee /etc/systemd/system/inspector.service > /dev/null <<'EOF'
+[Unit]
+Description=DB Fleet Inspector
+After=network-online.target
+[Service]
+ExecStart=/usr/bin/python3 /opt/inspector.py
+Restart=always
+[Install]
+WantedBy=multi-user.target
+EOF
+sudo systemctl daemon-reload
+sudo systemctl enable inspector
 ```
 
 **Why:** systemd keeps the app running and restarts it after a crash or reboot.
@@ -360,7 +369,14 @@ aws rds describe-db-clusters --db-cluster-identifier fleet-aurora --query 'DBClu
 **49\. Restore to a new cluster (on the Mac)**
 
 ```bash
-aws rds restore-db-cluster-to-point-in-time \   --source-db-cluster-identifier fleet-aurora \   --db-cluster-identifier fleet-restore \   --use-latest-restorable-time \   --db-subnet-group-name fleet-db-subnets \   --vpc-security-group-ids sg-0fb9f549d68e1e0a7 \   --serverless-v2-scaling-configuration MinCapacity=0,MaxCapacity=1,SecondsUntilAutoPause=300 \   --query DBCluster.Status --output text
+aws rds restore-db-cluster-to-point-in-time \
+  --source-db-cluster-identifier fleet-aurora \
+  --db-cluster-identifier fleet-restore \
+  --use-latest-restorable-time \
+  --db-subnet-group-name fleet-db-subnets \
+  --vpc-security-group-ids sg-0fb9f549d68e1e0a7 \
+  --serverless-v2-scaling-configuration MinCapacity=0,MaxCapacity=1,SecondsUntilAutoPause=300 \
+  --query DBCluster.Status --output text
 ```
 
 **Why:** Point-in-time recovery always creates a new cluster, so the original stays untouched. This one has storage only, no instances.
