@@ -9,7 +9,7 @@
 
 **2. Verify the installation.**
 
-- terraform version && aws \--version
+- terraform version && aws --version
 
 **Why:** This confirms that both tools are installed and available in the terminal.
 
@@ -93,11 +93,11 @@ gh repo create db-fleet-inspector --private --source=. --push
 
 **Step 14: provider.tf**
 
-Full code: [provider.tf](../provider.tf)
+Full code: [provider.tf](provider.tf)
 
 **Step 15: network.tf**
 
-Full code: [network.tf](../network.tf)
+Full code: [network.tf](network.tf)
 
 **18\. Create the network**
 
@@ -119,7 +119,7 @@ git add . && git commit -m "Add network" && git push
 
 **20\. Create database.tf**
 
-Full code: [database.tf](../database.tf)
+Full code: [database.tf](database.tf)
 
 **Why:** Defines a private, encrypted Aurora PostgreSQL cluster with 7-day backups, a writer and a reader in two AZs. Only the app security group can reach port 5432\. AWS stores the master password in Secrets Manager.
 
@@ -163,7 +163,7 @@ git add database.tf git commit -m "Add Aurora cluster" git push
 
 **24\. Create app.tf**
 
-Full code: [app.tf](../app.tf)
+Full code: [app.tf](app.tf)
 
 **Why:** Defines the EC2 server in a public subnet, its firewall rules, and an IAM role that lets it read only the database secret. Admin access goes through Session Manager, so SSH stays closed.
 
@@ -243,7 +243,7 @@ exit
 
 **34\. Allow the server to read database settings (on the Mac)**
 
-Full code: [app.tf](../app.tf)
+Full code: [app.tf](app.tf)
 
 **Why:** The inspector checks settings through the AWS API. This role can only read them, not change anything. Describe actions need Resource \* here, which is an acceptable trade-off for read-only access.
 
@@ -265,13 +265,13 @@ git add app.tf git commit -m "Allow reading RDS settings" git push
 
 **37\. Create the inspector (on the Mac)**
 
-Full code: [app/inspector.py](../app/inspector.py)
+Full code: [app/inspector.py](app/inspector.py)
 
 **Why:** A small Python web server. On each page load it reads settings from the AWS API and prints PASS or FAIL for each check.
 
 **38\. Create the deploy script (on the Mac)**
 
-Full code: [deploy.sh](../deploy.sh)
+Full code: [deploy.sh](deploy.sh)
 
 **Why:** Sends the code to the server through AWS Systems Manager, with no SSH. GitHub Actions will reuse this script later.
 
@@ -401,7 +401,7 @@ aws rds delete-db-cluster --db-cluster-identifier fleet-restore --skip-final-sna
 
 **52\.** In VS Code, create monitoring.tf in the project root, paste this code and save.
 
-Full code: [monitoring.tf](../monitoring.tf)
+Full code: [monitoring.tf](monitoring.tf)
 
 **Why:** It defines an alarm that fires when average database CPU stays above 80% for two 5-minute periods.
 
@@ -433,7 +433,7 @@ aws cloudwatch describe-alarms --alarm-names fleet-aurora-high-cpu --query 'Metr
 
 **56\.** In VS Code, create github.tf in the project root, paste this code and save.
 
-Full code: [github.tf](../github.tf)
+Full code: [github.tf](github.tf)
 
 **Why:** It lets only the main branch of this repository get temporary AWS credentials, limited to deploying on this server.
 
@@ -447,7 +447,7 @@ terraform apply
 
 **58\.** In VS Code, create the file .github/workflows/deploy.yml, paste this code and save.
 
-Full code: [.github/workflows/deploy.yml](../.github/workflows/deploy.yml)
+Full code: [.github/workflows/deploy.yml](.github/workflows/deploy.yml)
 
 **Why:** It tells GitHub to run the deploy after each push to main that changes the app.
 
@@ -495,7 +495,7 @@ gh run rerun 41338011103 -R Danylyuk/db-fleet-inspector
 
 **64\.** In VS Code, create README.md in the project root, paste this text and save.
 
-Full code: [README.md](../README.md)
+Full code: [README.md](README.md)
 
 **Why:** It explains the project, its design and its limits to anyone who opens the repository.
 
