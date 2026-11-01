@@ -15,7 +15,7 @@ resource "aws_iam_role" "github_deploy" {
       Condition = {
         StringEquals = {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
-          "token.actions.githubusercontent.com:sub" = "repo:Danylyuk/db-fleet-inspector:ref:refs/heads/main"
+          "token.actions.githubusercontent.com:sub" = "repo:Danylyuk@7465458/db-fleet-inspector@1441122977:ref:refs/heads/main"
         }
       }
     }]
